@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/docs/" />
+  <Folder Name="/samples/" />
+  <Folder Name="/src/">
+    <Project Path="src/ZCrew.Extensions.Tasks/ZCrew.Extensions.Tasks.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ZCrew.Extensions.Tasks.UnitTests/ZCrew.Extensions.Tasks.UnitTests.csproj" />
+  </Folder>
+</Solution>
