@@ -20,6 +20,10 @@ public static class AsyncEventHandlerExtensions
     /// <exception cref="OperationCanceledException">
     ///     If a request was made to cancel the <paramref name="token" />.
     /// </exception>
+    /// <remarks>
+    ///     This method is based on the functionality of <see cref="EventHandler.Invoke"/> and will stop calling
+    ///     handlers if an exception is thrown.
+    /// </remarks>
     public static Task InvokeAsync(
         this AsyncEventHandler? asyncEventHandler,
         object sender,
@@ -44,6 +48,10 @@ public static class AsyncEventHandlerExtensions
     /// <exception cref="OperationCanceledException">
     ///     If a request was made to cancel the <paramref name="token" />.
     /// </exception>
+    /// <remarks>
+    ///     This method is based on the functionality of <see cref="EventHandler{TEventArgs}.Invoke"/> and will stop
+    ///     calling handlers if an exception is thrown.
+    /// </remarks>
     public static Task InvokeAsync<TEventArgs>(
         this AsyncEventHandler<TEventArgs>? asyncEventHandler,
         object sender,
@@ -70,6 +78,10 @@ public static class AsyncEventHandlerExtensions
     ///     If a request was made to cancel the <paramref name="token" />.
     /// </exception>
     /// <exception cref="AggregateException">If one or more exceptions were thrown by the handlers.</exception>
+    /// <remarks>
+    ///     This method deviates from the behavior of <see cref="EventHandler.Invoke"/> and will continue calling
+    ///     handlers if an exception is thrown. Use <see cref="InvokeAsync"/> if this is undesirable.
+    /// </remarks>
     public static async Task InvokeParallelAsync(
         this AsyncEventHandler? asyncEventHandler,
         object sender,
@@ -144,6 +156,10 @@ public static class AsyncEventHandlerExtensions
     ///     If a request was made to cancel the <paramref name="token" />.
     /// </exception>
     /// <exception cref="AggregateException">If one or more exceptions were thrown by the handlers.</exception>
+    /// <remarks>
+    ///     This method deviates from the behavior of <see cref="EventHandler.Invoke"/> and will continue calling
+    ///     handlers if an exception is thrown. Use <see cref="InvokeAsync"/> if this is undesirable.
+    /// </remarks>
     public static async Task InvokeSequentialAsync(
         this AsyncEventHandler? asyncEventHandler,
         object sender,
@@ -206,6 +222,10 @@ public static class AsyncEventHandlerExtensions
     ///     If a request was made to cancel the <paramref name="token" />.
     /// </exception>
     /// <exception cref="AggregateException">If one or more exceptions were thrown by the handlers.</exception>
+    /// <remarks>
+    ///     This method deviates from the behavior of <see cref="EventHandler{TEventArgs}.Invoke"/> and will continue
+    ///     calling handlers if an exception is thrown. Use <see cref="InvokeAsync{TEventArgs}"/> if this is undesirable.
+    /// </remarks>
     public static async Task InvokeParallelAsync<TEventArgs>(
         this AsyncEventHandler<TEventArgs>? asyncEventHandler,
         object sender,
@@ -278,6 +298,10 @@ public static class AsyncEventHandlerExtensions
     ///     If a request was made to cancel the <paramref name="token" />.
     /// </exception>
     /// <exception cref="AggregateException">If one or more exceptions were thrown by the handlers.</exception>
+    /// <remarks>
+    ///     This method deviates from the behavior of <see cref="EventHandler{TEventArgs}.Invoke"/> and will continue
+    ///     calling handlers if an exception is thrown. Use <see cref="InvokeAsync{TEventArgs}"/> if this is undesirable.
+    /// </remarks>
     public static async Task InvokeSequentialAsync<TEventArgs>(
         this AsyncEventHandler<TEventArgs>? asyncEventHandler,
         object sender,
