@@ -1,21 +1,102 @@
-# Task Extensions
+# ZCrew.Extensions.Tasks
 
-## CSharpier
+Extensions to tasks including: unified async wrappers for delegates and async event handling.
 
-This project uses [CSharpier](https://csharpier.com/) to format code.
-A [pre-commit](https://pre-commit.com/) script runs before commiting code to ensure the code formatting adheres to the
-project's style.
-In order to use CSharpier some steps must be taken:
+## Installation
 
-1. Install CSharpier using: `dotnet tool install csharpier`
-2. Install python from https://www.python.org/downloads/
-3. Install `pre-commit` (version 25.3 has been tested) by running `pip install pre-commit`
-4. Install the hooks using `pre-commit install`
-5. Optionally: run the pre-commit checks using `pre-commit run --all-files`
-    ```
-    X:\source\Common>pre-commit run --all-files
-    Install .NET tools.......................................................Passed
-    Run CSharpier on C# files................................................Passed
-    ```
-6. Optionally: Install the CSharpier plugin from https://csharpier.com/docs/Editors and set a keyboard shortcut
-7. All done! Before committing code you will be notified if there are any formatting issues and CSharpier will fix them
+This package is available on NuGet as `ZCrew.Extensions.Tasks` for these frameworks:
+
+- .NET 8.0
+- .NET 9.0
+- .NET 10.0
+
+```
+<PackageReference Include="ZCrew.Extensions.Tasks" />
+```
+
+## Unified Async Wrappers
+
+This library provides unified async wrappers for delegates, allowing library authors to accept both synchronous and asynchronous callbacks through a common interface.
+
+
+### Using an Async Wrapper
+
+Use `IAsyncAction<T>` to store any of these delegate types uniformly:
+
+```csharp
+using ZCrew.Extensions.Tasks;
+
+public class NotificationService
+{
+    private readonly IAsyncAction<string> _onNotification;
+
+    // Accept a synchronous callback
+    public NotificationService(Action<string> onNotification)
+    {
+        _onNotification = onNotification.AsAsyncAction();
+    }
+
+    // Accept an async callback
+    public NotificationService(Func<string, Task> onNotification)
+    {
+        _onNotification = onNotification.AsAsyncAction();
+    }
+
+    // Accept an async callback with cancellation support
+    public NotificationService(Func<string, CancellationToken, Task> onNotification)
+    {
+        _onNotification = onNotification.AsAsyncAction();
+    }
+
+    public async Task NotifyAsync(string message, CancellationToken token = default)
+    {
+        await _onNotification.InvokeAsync(message, token);
+    }
+}
+```
+
+## Async Event Handlers
+
+Traditional C# events use `EventHandler` which is synchronous. This library provides `AsyncEventHandler` for async event patterns.
+
+### Defining an Async Event
+
+```csharp
+using ZCrew.Extensions.Tasks;
+
+public class FileWatcher
+{
+    public event AsyncEventHandler<FileChangedEventArgs>? FileChanged;
+
+    protected async Task OnFileChangedAsync(FileChangedEventArgs e, CancellationToken token)
+    {
+        await FileChanged.InvokeSequentialAsync(this, e, token);
+    }
+}
+
+public class FileChangedEventArgs : EventArgs
+{
+    public string FilePath { get; init; } = string.Empty;
+}
+```
+
+### Subscribing to Async Events
+
+```csharp
+var watcher = new FileWatcher();
+
+watcher.FileChanged += async (sender, e, token) =>
+{
+    await ProcessFileAsync(e.FilePath, token);
+};
+```
+
+### Invocation Methods
+
+```csharp
+// Sequential: handlers run one after another
+await FileChanged.InvokeSequentialAsync(this, args, token);
+
+// Parallel: handlers run concurrently
+await FileChanged.InvokeParallelAsync(this, args, token);
+```
