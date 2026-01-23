@@ -3,6 +3,18 @@
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <PackageTags>async;tasks;delegates;extensions</PackageTags>
+    <Description>Extensions to tasks including: unified async wrappers for delegates and async event handling</Description>
+  </PropertyGroup>
+
+  <!-- NuGet package content -->
+  <ItemGroup>
+    <None Include="../../img/icon.png" Pack="true" PackagePath="/" Visible="false" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" Visible="false" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Nito.AsyncEx.Coordination" />
     <PackageReference Include="Nito.AsyncEx.Tasks" />
