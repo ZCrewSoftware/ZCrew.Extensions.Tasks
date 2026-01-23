@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/docs/" />
+  <Folder Name="/docs/">
+    <File Path="docs/AsyncEventHandler.md" />
+  </Folder>
   <Folder Name="/samples/" />
   <Folder Name="/src/">
     <Project Path="src/ZCrew.Extensions.Tasks/ZCrew.Extensions.Tasks.csproj" />

@@ -28,29 +28,29 @@ using ZCrew.Extensions.Tasks;
 
 public class NotificationService
 {
-    private readonly IAsyncAction<string> _onNotification;
+    private readonly IAsyncAction<string> onNotification;
 
     // Accept a synchronous callback
     public NotificationService(Action<string> onNotification)
     {
-        _onNotification = onNotification.AsAsyncAction();
+        this.onNotification = onNotification.AsAsyncAction();
     }
 
     // Accept an async callback
     public NotificationService(Func<string, Task> onNotification)
     {
-        _onNotification = onNotification.AsAsyncAction();
+        this.onNotification = onNotification.AsAsyncAction();
     }
 
     // Accept an async callback with cancellation support
     public NotificationService(Func<string, CancellationToken, Task> onNotification)
     {
-        _onNotification = onNotification.AsAsyncAction();
+        this.onNotification = onNotification.AsAsyncAction();
     }
 
     public async Task NotifyAsync(string message, CancellationToken token = default)
     {
-        await _onNotification.InvokeAsync(message, token);
+        await this.onNotification.InvokeAsync(message, token);
     }
 }
 ```
@@ -94,6 +94,9 @@ watcher.FileChanged += async (sender, e, token) =>
 ### Invocation Methods
 
 ```csharp
+// Default: handlers run one after another similar to EventHandler.Invoke
+await FileChanged.InvokeAsync(this, args, token);
+
 // Sequential: handlers run one after another
 await FileChanged.InvokeSequentialAsync(this, args, token);
 
