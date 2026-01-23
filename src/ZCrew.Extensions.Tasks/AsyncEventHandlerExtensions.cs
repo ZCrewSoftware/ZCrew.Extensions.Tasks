@@ -2,16 +2,17 @@ namespace ZCrew.Extensions.Tasks;
 
 /// <summary>
 ///     Extension methods for the <see cref="AsyncEventHandler" /> and <see cref="AsyncEventHandler{TEventArgs}" />.
-///     The preferred way to call an <see cref="AsyncEventHandler" /> and <see cref="AsyncEventHandler{TEventArgs}" /> is
-///     <see cref="InvokeSequentialAsync" /> and <see cref="InvokeSequentialAsync{TEventArgs}" /> respectively.
+///     The preferred way to call an <see cref="AsyncEventHandler" /> and <see cref="AsyncEventHandler{TEventArgs}" />
+///     is <see cref="InvokeSequentialAsync" /> and <see cref="InvokeSequentialAsync{TEventArgs}" /> respectively.
 /// </summary>
 public static class AsyncEventHandlerExtensions
 {
     /// <summary>
     ///     Invokes the <see cref="AsyncEventHandler" /> in a sequential way based on the system implementation of
     ///     <see cref="AsyncEventHandler.Invoke" />. This will not check if the <see cref="CancellationToken" />
-    ///     <paramref name="token" /> has been canceled between calls. Exceptions thrown by any event handler will
-    ///     immediately rethrow and pending event handlers will not be invoked.
+    ///     <paramref name="token" /> has been canceled between calls. Synchronous exceptions thrown by any event
+    ///     handler will immediately rethrow and the remaining event handlers will not be called. Once every handler has
+    ///     been called and no exceptions have been thrown: no exceptions thrown asynchronously will be caught.
     /// </summary>
     /// <param name="asyncEventHandler">The <see cref="AsyncEventHandler" />.</param>
     /// <param name="sender">The reference sending the request.</param>
@@ -22,7 +23,8 @@ public static class AsyncEventHandlerExtensions
     /// </exception>
     /// <remarks>
     ///     This method is based on the functionality of <see cref="EventHandler.Invoke"/> and will stop calling
-    ///     handlers if an exception is thrown.
+    ///     handlers if a synchronous exception is thrown. Asynchronous exceptions will not be rethrown and will not be
+    ///     observed.
     /// </remarks>
     public static Task InvokeAsync(
         this AsyncEventHandler? asyncEventHandler,
@@ -38,8 +40,10 @@ public static class AsyncEventHandlerExtensions
     /// <summary>
     ///     Invokes the <see cref="AsyncEventHandler{TEventArgs}" /> in a sequential way based on the system
     ///     implementation of <see cref="AsyncEventHandler{TEventArgs}.Invoke" />. This will not check if the
-    ///     <see cref="CancellationToken" /> <paramref name="token" /> has been canceled between calls. Exceptions thrown
-    ///     by any event handler will immediately rethrow and pending event handlers will not be invoked.
+    ///     <see cref="CancellationToken" /> <paramref name="token" /> has been canceled between calls. Synchronous
+    ///     exceptions thrown by any event handler will immediately rethrow and the remaining event handlers will not be
+    ///     called. Once every handler has been called and no exceptions have been thrown: no exceptions thrown
+    ///     asynchronously will be caught.
     /// </summary>
     /// <param name="asyncEventHandler">The <see cref="AsyncEventHandler{TEventArgs}" />.</param>
     /// <param name="sender">The reference sending the request.</param>
@@ -50,7 +54,8 @@ public static class AsyncEventHandlerExtensions
     /// </exception>
     /// <remarks>
     ///     This method is based on the functionality of <see cref="EventHandler{TEventArgs}.Invoke"/> and will stop
-    ///     calling handlers if an exception is thrown.
+    ///     calling handlers if a synchronous exception is thrown. Asynchronous exceptions will not be rethrown and will
+    ///     not be observed.
     /// </remarks>
     public static Task InvokeAsync<TEventArgs>(
         this AsyncEventHandler<TEventArgs>? asyncEventHandler,
@@ -65,8 +70,8 @@ public static class AsyncEventHandlerExtensions
 
     /// <summary>
     ///     Invokes the <see cref="AsyncEventHandler" /> in a parallel way. Each event handler will be forced to yield
-    ///     asynchronously. The <see cref="CancellationToken" /> <paramref name="token" /> will be checked before calling
-    ///     the event handlers and pending event handlers may not be invoked if cancellation has been requested.
+    ///     asynchronously. The <see cref="CancellationToken" /> <paramref name="token" /> will be checked before
+    ///     calling the event handlers and pending event handlers may not be invoked if cancellation has been requested.
     ///     Exceptions thrown by any event handler will be recorded in a <see cref="AggregateException" /> and pending
     ///     event handlers will be invoked.
     /// </summary>
@@ -143,10 +148,10 @@ public static class AsyncEventHandlerExtensions
 
     /// <summary>
     ///     Invokes the <see cref="AsyncEventHandler" /> in a sequential way. Each event handler will be invoked in the
-    ///     sequence they were registered. The <see cref="CancellationToken" /> <paramref name="token" /> will be checked
-    ///     before calling each event handlers and pending event handlers will not be invoked if cancellation has been
-    ///     requested. Exceptions thrown by any event handler will be recorded in a <see cref="AggregateException" /> and
-    ///     pending event handlers will be invoked.
+    ///     sequence they were registered. The <see cref="CancellationToken" /> <paramref name="token" /> will be
+    ///     checked before calling each event handlers and pending event handlers will not be invoked if cancellation
+    ///     has been requested. Exceptions thrown by any event handler will be recorded in a
+    ///     <see cref="AggregateException" /> and pending event handlers will be invoked.
     /// </summary>
     /// <param name="asyncEventHandler">The <see cref="AsyncEventHandler" />.</param>
     /// <param name="sender">The reference sending the request.</param>
@@ -208,11 +213,11 @@ public static class AsyncEventHandlerExtensions
     }
 
     /// <summary>
-    ///     Invokes the <see cref="AsyncEventHandler{TEventArgs}" /> in a parallel way. Each event handler will be forced
-    ///     to yield asynchronously. The <see cref="CancellationToken" /> <paramref name="token" /> will be checked before
-    ///     calling the event handlers and pending event handlers may not be invoked if cancellation has been requested.
-    ///     Exceptions thrown by any event handler will be recorded in a <see cref="AggregateException" /> and pending
-    ///     event handlers will be invoked.
+    ///     Invokes the <see cref="AsyncEventHandler{TEventArgs}" /> in a parallel way. Each event handler will be
+    ///     forced to yield asynchronously. The <see cref="CancellationToken" /> <paramref name="token" /> will be
+    ///     checked before calling the event handlers and pending event handlers may not be invoked if cancellation has
+    ///     been requested. Exceptions thrown by any event handler will be recorded in a
+    ///     <see cref="AggregateException" /> and pending event handlers will be invoked.
     /// </summary>
     /// <param name="asyncEventHandler">The <see cref="AsyncEventHandler{TEventArgs}" />.</param>
     /// <param name="sender">The reference sending the request.</param>
@@ -224,7 +229,8 @@ public static class AsyncEventHandlerExtensions
     /// <exception cref="AggregateException">If one or more exceptions were thrown by the handlers.</exception>
     /// <remarks>
     ///     This method deviates from the behavior of <see cref="EventHandler{TEventArgs}.Invoke"/> and will continue
-    ///     calling handlers if an exception is thrown. Use <see cref="InvokeAsync{TEventArgs}"/> if this is undesirable.
+    ///     calling handlers if an exception is thrown. Use <see cref="InvokeAsync{TEventArgs}"/> if this is
+    ///     undesirable.
     /// </remarks>
     public static async Task InvokeParallelAsync<TEventArgs>(
         this AsyncEventHandler<TEventArgs>? asyncEventHandler,
@@ -300,7 +306,8 @@ public static class AsyncEventHandlerExtensions
     /// <exception cref="AggregateException">If one or more exceptions were thrown by the handlers.</exception>
     /// <remarks>
     ///     This method deviates from the behavior of <see cref="EventHandler{TEventArgs}.Invoke"/> and will continue
-    ///     calling handlers if an exception is thrown. Use <see cref="InvokeAsync{TEventArgs}"/> if this is undesirable.
+    ///     calling handlers if an exception is thrown. Use <see cref="InvokeAsync{TEventArgs}"/> if this is
+    ///     undesirable.
     /// </remarks>
     public static async Task InvokeSequentialAsync<TEventArgs>(
         this AsyncEventHandler<TEventArgs>? asyncEventHandler,
