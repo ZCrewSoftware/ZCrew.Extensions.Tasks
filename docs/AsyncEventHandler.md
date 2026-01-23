@@ -135,6 +135,8 @@ service.MessageReceived += handler;
 service.MessageReceived -= handler;
 ```
 
+Failure to unsubscribe can prevent objects from being garbage collected, leading to memory leaks.
+
 ### Handler Ordering
 
 When using `InvokeSequentialAsync`, handlers are invoked in registration order.
@@ -142,8 +144,6 @@ However, the exact sequence can be difficult to predict in complex applications 
 the same event at different times.
 If strict ordering is required for publicly accessible event handlers, consider using a dedicated message bus or
 orchestration pattern instead.
-
-Failure to unsubscribe can prevent objects from being garbage collected, leading to memory leaks.
 
 ### When to Use Alternatives
 
