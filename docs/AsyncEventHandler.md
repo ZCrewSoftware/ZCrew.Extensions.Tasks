@@ -39,11 +39,11 @@ service.MessageReceived += async (sender, args, token) =>
 
 ## Invoke Methods
 
-| Method                  | Execution  | Exception Behavior                              | Cancellation Support                          |
-|-------------------------|------------|-------------------------------------------------|-----------------------------------------------|
-| `InvokeAsync`           | Sequential | First **synchronous** exception stops execution | At the start                                  |
-| `InvokeSequentialAsync` | Sequential | Collects all exceptions, invokes all handlers   | At the start and between each handler         |
-| `InvokeParallelAsync`   | Parallel   | Collects all exceptions, invokes all handlers   | At the start and before starting each handler |
+| Method                  | Execution  | Exception Behavior                                 | Cancellation Support                          |
+|-------------------------|------------|----------------------------------------------------|-----------------------------------------------|
+| `InvokeAsync`           | Sequential | **Only the first synchronous exception is thrown** | At the start                                  |
+| `InvokeSequentialAsync` | Sequential | Collects all exceptions, invokes all handlers      | At the start and between each handler         |
+| `InvokeParallelAsync`   | Parallel   | Collects all exceptions, invokes all handlers      | At the start and before starting each handler |
 
 ## Exception Handling
 
@@ -59,16 +59,17 @@ handler += async (sender, args, token) => await Task.Delay(TimeSpan.FromSeconds(
 await handler.InvokeAsync(sender, args, token);
 ```
 
-However, if the exception is thrown after the handler has yielded or the exception is thrown asynchronously, the
-remaining handlers are invoked:
+However, if the exception is thrown asynchronously or an exception-task is returned synchronously using
+`Task.FromException(...)`, the remaining handlers are invoked.
+The exceptions thrown here by the first two handlers will not be observed:
 
 ```csharp
-handler += (sender, args, token) => Task.FromException(new Exception()); // Throw an exception asynchronously
 handler += async (sender, args, token) =>
 {
     await Task.Delay(TimeSpan.FromSeconds(5), token); // This causes the handler to yield
     throw new Exception();
 };
+handler += (sender, args, token) => Task.FromException(new Exception()); // Return an exception-task
 handler += async (sender, args, token) => await Task.Delay(TimeSpan.FromSeconds(100), token); // Invoked!
 
 // Since the first two handlers did not throw an exception synchronously, the third handler will be invoked
