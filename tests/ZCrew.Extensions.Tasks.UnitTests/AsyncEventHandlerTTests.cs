@@ -15,9 +15,21 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         await eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
@@ -36,7 +48,7 @@ public class AsyncEventHandlerTTests
     {
         // Arrange
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
         var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
@@ -50,8 +62,8 @@ public class AsyncEventHandlerTTests
     {
         // Arrange
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new IOException());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) => throw new IOException();
 
         // Act
         var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
@@ -68,9 +80,17 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
@@ -89,9 +109,17 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
@@ -110,9 +138,17 @@ public class AsyncEventHandlerTTests
         var action2 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
         var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
@@ -137,9 +173,21 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => cts.Cancel());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            cts.Cancel();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, cts.Token);
@@ -159,14 +207,12 @@ public class AsyncEventHandlerTTests
         var handlerEnteredEvent = new AsyncManualResetEvent();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler(
-            async (EventArgs _) =>
-            {
-                var delay = Task.Delay(Timeout.Infinite, cts.Token);
-                handlerEnteredEvent.Set();
-                await delay;
-            }
-        );
+        eventWrapper.TestEvent += async (_, _, _) =>
+        {
+            var delay = Task.Delay(Timeout.Infinite, cts.Token);
+            handlerEnteredEvent.Set();
+            await delay;
+        };
 
         // Act
         var invokeAsync = async () =>
@@ -191,7 +237,11 @@ public class AsyncEventHandlerTTests
         var calledEventArgs = default(object?);
 
         var eventWrapper = new AsyncEventHandlerWrapper<object>();
-        eventWrapper.TestEvent += TestEventHandler<object>(x => calledEventArgs = x);
+        eventWrapper.TestEvent += (_, e, _) =>
+        {
+            calledEventArgs = e;
+            return Task.CompletedTask;
+        };
 
         // Act
         await eventWrapper.InvokeAsync(eventArgs, CancellationToken.None);
@@ -220,34 +270,38 @@ public class AsyncEventHandlerTTests
         var eventLock1 = new AsyncManualResetEvent();
         var eventLock2 = new AsyncManualResetEvent();
 
-        var completionOrder = new List<int>();
+        var action1 = Substitute.For<Action>();
+        var action2 = Substitute.For<Action>();
+        var action3 = Substitute.For<Action>();
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler(
-            async (EventArgs _) =>
-            {
-                await eventLock1.WaitAsync();
-                completionOrder.Add(1);
-            }
-        );
-        eventWrapper.TestEvent += TestEventHandler(
-            async (EventArgs _) =>
-            {
-                await eventLock2.WaitAsync();
-                completionOrder.Add(2);
-                eventLock1.Set();
-            }
-        );
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ =>
+        eventWrapper.TestEvent += async (_, _, token) =>
         {
-            completionOrder.Add(3);
+            await eventLock1.WaitAsync(token);
+            action1();
+        };
+        eventWrapper.TestEvent += async (_, _, token) =>
+        {
+            await eventLock2.WaitAsync(token);
+            action2();
+            eventLock1.Set();
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
             eventLock2.Set();
-        });
+            return Task.CompletedTask;
+        };
 
         // Act
         await eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
 
         // Assert
-        Assert.Equal([3, 2, 1], completionOrder);
+        Received.InOrder(() =>
+        {
+            action3();
+            action2();
+            action1();
+        });
     }
 
     [Fact]
@@ -255,15 +309,15 @@ public class AsyncEventHandlerTTests
     {
         // Arrange
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
         var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeParallelAsync);
-        Assert.Single(aggregateException.InnerExceptions);
-        Assert.Contains(aggregateException.InnerExceptions, exception => exception is ArgumentException);
+        var exception = Assert.Single(aggregateException.InnerExceptions);
+        Assert.IsType<ArgumentException>(exception);
     }
 
     [Fact]
@@ -271,8 +325,8 @@ public class AsyncEventHandlerTTests
     {
         // Arrange
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new IOException());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) => throw new IOException();
 
         // Act
         var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
@@ -292,9 +346,17 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
@@ -313,9 +375,17 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
@@ -334,9 +404,17 @@ public class AsyncEventHandlerTTests
         var action2 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
         var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
@@ -359,9 +437,21 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeParallelAsync = async () =>
@@ -386,14 +476,12 @@ public class AsyncEventHandlerTTests
         var handlerEnteredEvent = new AsyncManualResetEvent();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler(
-            async (EventArgs _) =>
-            {
-                var delay = Task.Delay(Timeout.Infinite, cts.Token);
-                handlerEnteredEvent.Set();
-                await delay;
-            }
-        );
+        eventWrapper.TestEvent += async (_, _, _) =>
+        {
+            var delay = Task.Delay(Timeout.Infinite, cts.Token);
+            handlerEnteredEvent.Set();
+            await delay;
+        };
 
         // Act
         var invokeParallelAsync = async () =>
@@ -418,7 +506,11 @@ public class AsyncEventHandlerTTests
         var calledEventArgs = default(object?);
 
         var eventWrapper = new AsyncEventHandlerWrapper<object>();
-        eventWrapper.TestEvent += TestEventHandler<object>(x => calledEventArgs = x);
+        eventWrapper.TestEvent += (_, e, _) =>
+        {
+            calledEventArgs = e;
+            return Task.CompletedTask;
+        };
 
         // Act
         await eventWrapper.InvokeParallelAsync(eventArgs, CancellationToken.None);
@@ -449,9 +541,21 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         await eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
@@ -470,15 +574,15 @@ public class AsyncEventHandlerTTests
     {
         // Arrange
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
         var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
-        Assert.Single(aggregateException.InnerExceptions);
-        Assert.Contains(aggregateException.InnerExceptions, exception => exception is ArgumentException);
+        var exception = Assert.Single(aggregateException.InnerExceptions);
+        Assert.IsType<ArgumentException>(exception);
     }
 
     [Fact]
@@ -486,17 +590,19 @@ public class AsyncEventHandlerTTests
     {
         // Arrange
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new IOException());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) => throw new IOException();
 
         // Act
         var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
-        Assert.Equal(2, aggregateException.InnerExceptions.Count);
-        Assert.Contains(aggregateException.InnerExceptions, exception => exception is ArgumentException);
-        Assert.Contains(aggregateException.InnerExceptions, exception => exception is IOException);
+        Assert.Collection(
+            aggregateException.InnerExceptions,
+            exception => Assert.IsType<ArgumentException>(exception),
+            exception => Assert.IsType<IOException>(exception)
+        );
     }
 
     [Fact]
@@ -507,9 +613,17 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
@@ -531,9 +645,17 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
@@ -555,9 +677,17 @@ public class AsyncEventHandlerTTests
         var action2 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action2());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => throw new ArgumentException());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action2();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
         var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
@@ -582,9 +712,21 @@ public class AsyncEventHandlerTTests
         var action3 = Substitute.For<Action>();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action1());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => cts.Cancel());
-        eventWrapper.TestEvent += TestEventHandler<EventArgs>(_ => action3());
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action1();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            cts.Cancel();
+            return Task.CompletedTask;
+        };
+        eventWrapper.TestEvent += (_, _, _) =>
+        {
+            action3();
+            return Task.CompletedTask;
+        };
 
         // Act
         var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, cts.Token);
@@ -604,14 +746,12 @@ public class AsyncEventHandlerTTests
         var handlerEnteredEvent = new AsyncManualResetEvent();
 
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
-        eventWrapper.TestEvent += TestEventHandler(
-            async (EventArgs _) =>
-            {
-                var delay = Task.Delay(Timeout.Infinite, cts.Token);
-                handlerEnteredEvent.Set();
-                await delay;
-            }
-        );
+        eventWrapper.TestEvent += async (_, _, _) =>
+        {
+            var delay = Task.Delay(Timeout.Infinite, cts.Token);
+            handlerEnteredEvent.Set();
+            await delay;
+        };
 
         // Act
         var invokeSequentialAsync = async () =>
@@ -636,7 +776,11 @@ public class AsyncEventHandlerTTests
         var calledEventArgs = default(object?);
 
         var eventWrapper = new AsyncEventHandlerWrapper<object>();
-        eventWrapper.TestEvent += TestEventHandler<object>(x => calledEventArgs = x);
+        eventWrapper.TestEvent += (_, e, _) =>
+        {
+            calledEventArgs = e;
+            return Task.CompletedTask;
+        };
 
         // Act
         await eventWrapper.InvokeSequentialAsync(eventArgs, CancellationToken.None);
@@ -656,27 +800,6 @@ public class AsyncEventHandlerTTests
 
         // Assert
         Assert.True(true, "Should reach end of test without an exception");
-    }
-
-    private static AsyncEventHandler<TEventArgs> TestEventHandler<TEventArgs>(Action<TEventArgs> action)
-    {
-        return Handle;
-
-        Task Handle(object? sender, TEventArgs eventArgs, CancellationToken token)
-        {
-            action(eventArgs);
-            return Task.CompletedTask;
-        }
-    }
-
-    private static AsyncEventHandler<TEventArgs> TestEventHandler<TEventArgs>(Func<TEventArgs, Task> action)
-    {
-        return Handle;
-
-        Task Handle(object? sender, TEventArgs eventArgs, CancellationToken token)
-        {
-            return action(eventArgs);
-        }
     }
 }
 
