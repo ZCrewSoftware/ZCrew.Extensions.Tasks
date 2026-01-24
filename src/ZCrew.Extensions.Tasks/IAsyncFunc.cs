@@ -274,3 +274,148 @@ public interface IAsyncFunc<in T1, in T2, in T3, in T4, TResult>
     /// <exception cref="OperationCanceledException">If <paramref name="token"/> has been canceled.</exception>
     Task<TResult> InvokeAsync(T1 arg1, T2 arg2, T3 arg3, T4 arg4, CancellationToken token = default);
 }
+
+/// <summary>
+///     Wrapper to invoke a synchronous or asynchronous function with five parameters with <see langword="async"/>
+///     semantics regardless of the delegate type.
+/// </summary>
+/// <remarks>
+///     This may be useful when writing library code that can accept multiple delegates from:
+///     <list type="bullet">
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, CancellationToken, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, CancellationToken, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, ValueTask&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, CancellationToken, ValueTask&lt;TResult&gt;&gt;</c></item>
+///     </list>
+/// </remarks>
+public interface IAsyncFunc<in T1, in T2, in T3, in T4, in T5, TResult>
+{
+    /// <summary>
+    ///     Invoke the inner delegate with <see langword="async"/> semantics.
+    /// </summary>
+    /// <param name="arg1">The first parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg2">The second parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg3">The third parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg4">The fourth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg5">The fifth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="token">The token to monitor for cancellation requests.</param>
+    /// <exception cref="OperationCanceledException">If <paramref name="token"/> has been canceled.</exception>
+    Task<TResult> InvokeAsync(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, CancellationToken token = default);
+}
+
+/// <summary>
+///     Wrapper to invoke a synchronous or asynchronous function with six parameters with <see langword="async"/>
+///     semantics regardless of the delegate type.
+/// </summary>
+/// <remarks>
+///     This may be useful when writing library code that can accept multiple delegates from:
+///     <list type="bullet">
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, CancellationToken, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, CancellationToken, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, ValueTask&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, CancellationToken, ValueTask&lt;TResult&gt;&gt;</c></item>
+///     </list>
+/// </remarks>
+public interface IAsyncFunc<in T1, in T2, in T3, in T4, in T5, in T6, TResult>
+{
+    /// <summary>
+    ///     Invoke the inner delegate with <see langword="async"/> semantics.
+    /// </summary>
+    /// <param name="arg1">The first parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg2">The second parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg3">The third parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg4">The fourth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg5">The fifth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg6">The sixth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="token">The token to monitor for cancellation requests.</param>
+    /// <exception cref="OperationCanceledException">If <paramref name="token"/> has been canceled.</exception>
+    Task<TResult> InvokeAsync(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, CancellationToken token = default);
+}
+
+/// <summary>
+///     Wrapper to invoke a synchronous or asynchronous function with seven parameters with <see langword="async"/>
+///     semantics regardless of the delegate type.
+/// </summary>
+/// <remarks>
+///     This may be useful when writing library code that can accept multiple delegates from:
+///     <list type="bullet">
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, CancellationToken, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, CancellationToken, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, ValueTask&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, CancellationToken, ValueTask&lt;TResult&gt;&gt;</c></item>
+///     </list>
+/// </remarks>
+public interface IAsyncFunc<in T1, in T2, in T3, in T4, in T5, in T6, in T7, TResult>
+{
+    /// <summary>
+    ///     Invoke the inner delegate with <see langword="async"/> semantics.
+    /// </summary>
+    /// <param name="arg1">The first parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg2">The second parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg3">The third parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg4">The fourth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg5">The fifth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg6">The sixth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg7">The seventh parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="token">The token to monitor for cancellation requests.</param>
+    /// <exception cref="OperationCanceledException">If <paramref name="token"/> has been canceled.</exception>
+    Task<TResult> InvokeAsync(
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        CancellationToken token = default
+    );
+}
+
+/// <summary>
+///     Wrapper to invoke a synchronous or asynchronous function with eight parameters with <see langword="async"/>
+///     semantics regardless of the delegate type.
+/// </summary>
+/// <remarks>
+///     This may be useful when writing library code that can accept multiple delegates from:
+///     <list type="bullet">
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, T8, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, T8, CancellationToken, TResult&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, T8, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, T8, CancellationToken, Task&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, T8, ValueTask&lt;TResult&gt;&gt;</c></item>
+///         <item><c>Func&lt;T1, T2, T3, T4, T5, T6, T7, T8, CancellationToken, ValueTask&lt;TResult&gt;&gt;</c></item>
+///     </list>
+/// </remarks>
+public interface IAsyncFunc<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, TResult>
+{
+    /// <summary>
+    ///     Invoke the inner delegate with <see langword="async"/> semantics.
+    /// </summary>
+    /// <param name="arg1">The first parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg2">The second parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg3">The third parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg4">The fourth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg5">The fifth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg6">The sixth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg7">The seventh parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="arg8">The eighth parameter of the method that this wrapper encapsulates.</param>
+    /// <param name="token">The token to monitor for cancellation requests.</param>
+    /// <exception cref="OperationCanceledException">If <paramref name="token"/> has been canceled.</exception>
+    Task<TResult> InvokeAsync(
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        CancellationToken token = default
+    );
+}
