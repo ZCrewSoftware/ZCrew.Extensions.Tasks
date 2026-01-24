@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/docs/">
     <File Path="docs/AsyncEventHandler.md" />
+    <File Path="docs/IAsyncAction.md" />
+    <File Path="docs/IAsyncFunc.md" />
   </Folder>
   <Folder Name="/samples/" />
   <Folder Name="/src/">
