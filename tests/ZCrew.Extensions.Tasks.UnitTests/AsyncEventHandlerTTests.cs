@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Nito.AsyncEx;
 using NSubstitute;
+using ZCrew.Extensions.Tasks.UnitTests.Extensions;
 
 namespace ZCrew.Extensions.Tasks.UnitTests;
 
@@ -32,7 +33,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        await eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         Received.InOrder(() =>
@@ -51,7 +52,7 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
-        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentException>(invokeAsync);
@@ -66,7 +67,7 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new IOException();
 
         // Act
-        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentException>(invokeAsync);
@@ -93,7 +94,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentException>(invokeAsync);
@@ -122,7 +123,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentException>(invokeAsync);
@@ -151,7 +152,7 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
-        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeAsync = () => eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentException>(invokeAsync);
@@ -217,9 +218,8 @@ public class AsyncEventHandlerTTests
         // Act
         var invokeAsync = async () =>
         {
-            using var waitCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             var task = eventWrapper.InvokeAsync(EventArgs.Empty, cts.Token);
-            await handlerEnteredEvent.WaitAsync(waitCts.Token);
+            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken).Timeout();
             await cts.CancelAsync();
             await task;
         };
@@ -244,7 +244,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeAsync(eventArgs, CancellationToken.None);
+        await eventWrapper.InvokeAsync(eventArgs, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Same(eventArgs, calledEventArgs);
@@ -257,7 +257,7 @@ public class AsyncEventHandlerTTests
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
 
         // Act
-        await eventWrapper.InvokeAsync(EventArgs.Empty, CancellationToken.None);
+        await eventWrapper.InvokeAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(true, "Should reach end of test without an exception");
@@ -293,7 +293,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        await eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken).Timeout();
 
         // Assert
         Received.InOrder(() =>
@@ -312,7 +312,8 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
-        var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeParallelAsync = () =>
+            eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeParallelAsync);
@@ -329,7 +330,8 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new IOException();
 
         // Act
-        var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeParallelAsync = () =>
+            eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeParallelAsync);
@@ -359,7 +361,8 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeParallelAsync = () =>
+            eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<AggregateException>(invokeParallelAsync);
@@ -388,7 +391,8 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeParallelAsync = () =>
+            eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<AggregateException>(invokeParallelAsync);
@@ -417,7 +421,8 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
-        var invokeParallelAsync = () => eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeParallelAsync = () =>
+            eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<AggregateException>(invokeParallelAsync);
@@ -486,9 +491,8 @@ public class AsyncEventHandlerTTests
         // Act
         var invokeParallelAsync = async () =>
         {
-            using var waitCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             var task = eventWrapper.InvokeParallelAsync(EventArgs.Empty, cts.Token);
-            await handlerEnteredEvent.WaitAsync(waitCts.Token);
+            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken).Timeout();
             await cts.CancelAsync();
             await task;
         };
@@ -513,7 +517,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeParallelAsync(eventArgs, CancellationToken.None);
+        await eventWrapper.InvokeParallelAsync(eventArgs, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Same(eventArgs, calledEventArgs);
@@ -526,7 +530,7 @@ public class AsyncEventHandlerTTests
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
 
         // Act
-        await eventWrapper.InvokeParallelAsync(EventArgs.Empty, CancellationToken.None);
+        await eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(true, "Should reach end of test without an exception");
@@ -558,7 +562,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        await eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         Received.InOrder(() =>
@@ -577,7 +581,8 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
-        var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeSequentialAsync = () =>
+            eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
@@ -594,7 +599,8 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new IOException();
 
         // Act
-        var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeSequentialAsync = () =>
+            eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         var aggregateException = await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
@@ -626,7 +632,8 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeSequentialAsync = () =>
+            eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
@@ -658,7 +665,8 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeSequentialAsync = () =>
+            eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
@@ -690,7 +698,8 @@ public class AsyncEventHandlerTTests
         eventWrapper.TestEvent += (_, _, _) => throw new ArgumentException();
 
         // Act
-        var invokeSequentialAsync = () => eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        var invokeSequentialAsync = () =>
+            eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         await Assert.ThrowsAsync<AggregateException>(invokeSequentialAsync);
@@ -756,9 +765,8 @@ public class AsyncEventHandlerTTests
         // Act
         var invokeSequentialAsync = async () =>
         {
-            using var waitCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             var task = eventWrapper.InvokeSequentialAsync(EventArgs.Empty, cts.Token);
-            await handlerEnteredEvent.WaitAsync(waitCts.Token);
+            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken).Timeout();
             await cts.CancelAsync();
             await task;
         };
@@ -783,7 +791,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeSequentialAsync(eventArgs, CancellationToken.None);
+        await eventWrapper.InvokeSequentialAsync(eventArgs, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Same(eventArgs, calledEventArgs);
@@ -796,7 +804,7 @@ public class AsyncEventHandlerTTests
         var eventWrapper = new AsyncEventHandlerWrapper<EventArgs>();
 
         // Act
-        await eventWrapper.InvokeSequentialAsync(EventArgs.Empty, CancellationToken.None);
+        await eventWrapper.InvokeSequentialAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(true, "Should reach end of test without an exception");
