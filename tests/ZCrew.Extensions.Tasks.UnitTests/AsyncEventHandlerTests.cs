@@ -205,7 +205,7 @@ public sealed class AsyncEventHandlerTests
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-    public async Task InvokeAsync_WhenCancellationTokenIsCanceled_ShouldIgnoreCancellation()
+    public async Task InvokeAsync_WhenCancellationTokenIsCanceled_ShouldCancelBeforeInvokingPendingHandlers()
     {
         // Arrange
         var eventId1 = new Guid("98C9A7EF-6554-4CB2-ACA5-7022E72400B4");
@@ -224,24 +224,25 @@ public sealed class AsyncEventHandlerTests
         eventWrapper.TestEvent += eventHandler3;
 
         // Act
-        try
+        var invokeAsync = async () =>
         {
-            await eventWrapper.InvokeAsync(EventArgs.Empty, cts.Token);
-        }
-        finally
-        {
-            eventWrapper.TestEvent -= eventHandler1;
-            eventWrapper.TestEvent += eventHandler2;
-            eventWrapper.TestEvent += eventHandler3;
-        }
+            try
+            {
+                await eventWrapper.InvokeAsync(EventArgs.Empty, cts.Token);
+            }
+            finally
+            {
+                eventWrapper.TestEvent -= eventHandler1;
+                eventWrapper.TestEvent += eventHandler2;
+                eventWrapper.TestEvent += eventHandler3;
+            }
+        };
 
         // Assert
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(invokeAsync);
+
         var invocations = invocationList.ToList();
-        Assert.Collection(
-            invocations,
-            invocation => Assert.Equal(eventId1, invocation),
-            invocation => Assert.Equal(eventId3, invocation)
-        );
+        Assert.Collection(invocations, invocation => Assert.Equal(eventId1, invocation));
     }
 
     [Fact]
