@@ -39,40 +39,23 @@ service.MessageReceived += async (sender, args, token) =>
 
 ## Invoke Methods
 
-| Method                  | Execution  | Exception Behavior                                 | Cancellation Support                          |
-|-------------------------|------------|----------------------------------------------------|-----------------------------------------------|
-| `InvokeAsync`           | Sequential | **Only the first synchronous exception is thrown** | At the start                                  |
-| `InvokeSequentialAsync` | Sequential | Collects all exceptions, invokes all handlers      | At the start and between each handler         |
-| `InvokeParallelAsync`   | Parallel   | Collects all exceptions, invokes all handlers      | At the start and before starting each handler |
+| Method                  | Execution  | Exception Behavior                            | Cancellation Support                          |
+|-------------------------|------------|-----------------------------------------------|-----------------------------------------------|
+| `InvokeAsync`           | Sequential | Throws first exception, stops remaining       | At the start and between each handler         |
+| `InvokeSequentialAsync` | Sequential | Collects all exceptions, invokes all handlers | At the start and between each handler         |
+| `InvokeParallelAsync`   | Parallel   | Collects all exceptions, invokes all handlers | At the start and before starting each handler |
 
 ## Exception Handling
 
 ### InvokeAsync
 
-Synchronous exceptions thrown by any handler immediately propagate, and the remaining handlers are **not** invoked:
+Exceptions thrown by any handler immediately propagate, and the remaining handlers are **not** invoked:
 
 ```csharp
 handler += async (sender, args, token) => throw new Exception();
 handler += async (sender, args, token) => await Task.Delay(TimeSpan.FromSeconds(100), token); // Not invoked
 
-// Since the first handler threw an exception synchronously, the second handler will NOT be invoked
-await handler.InvokeAsync(sender, args, token);
-```
-
-However, if the exception is thrown asynchronously or an exception-task is returned synchronously using
-`Task.FromException(...)`, the remaining handlers are invoked.
-The exceptions thrown here by the first two handlers will not be observed:
-
-```csharp
-handler += async (sender, args, token) =>
-{
-    await Task.Delay(TimeSpan.FromSeconds(5), token); // This causes the handler to yield
-    throw new Exception();
-};
-handler += (sender, args, token) => Task.FromException(new Exception()); // Return an exception-task
-handler += async (sender, args, token) => await Task.Delay(TimeSpan.FromSeconds(100), token); // Invoked!
-
-// Since the first two handlers did not throw an exception synchronously, the third handler will be invoked
+// Since the first handler threw an exception, the second handler will NOT be invoked
 await handler.InvokeAsync(sender, args, token);
 ```
 
@@ -100,8 +83,7 @@ catch (AggregateException ex)
 
 ### Cancellation
 
-All invocation methods check `CancellationToken` before invoking handlers.
-The `InvokeAsync` is the only invocation method that does not check for cancellation **between** handlers in any way.
+All invocation methods check `CancellationToken` before invoking handlers and between each handler.
 When cancellation is requested:
 
 - `OperationCanceledException` is thrown immediately
