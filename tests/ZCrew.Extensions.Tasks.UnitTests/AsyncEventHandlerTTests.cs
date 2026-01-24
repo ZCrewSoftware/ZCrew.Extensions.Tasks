@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Nito.AsyncEx;
 using NSubstitute;
-using ZCrew.Extensions.Tasks.UnitTests.Extensions;
 
 namespace ZCrew.Extensions.Tasks.UnitTests;
 
@@ -199,7 +198,7 @@ public class AsyncEventHandlerTTests
         action3.DidNotReceive().Invoke();
     }
 
-    [Fact]
+    [Fact(Timeout = 5000)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
     public async Task InvokeAsync_WhenTokenIsCanceledWhenHandlerIsAwaiting_ShouldCancelAndThrowOperationCanceledException()
     {
@@ -219,7 +218,7 @@ public class AsyncEventHandlerTTests
         var invokeAsync = async () =>
         {
             var task = eventWrapper.InvokeAsync(EventArgs.Empty, cts.Token);
-            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken).Timeout();
+            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken);
             await cts.CancelAsync();
             await task;
         };
@@ -263,7 +262,7 @@ public class AsyncEventHandlerTTests
         Assert.True(true, "Should reach end of test without an exception");
     }
 
-    [Fact]
+    [Fact(Timeout = 5000)]
     public async Task InvokeParallelAsync_WhenThereAreManyPassingHandlers_ShouldCallAllHandlersInParallel()
     {
         // Arrange
@@ -293,7 +292,7 @@ public class AsyncEventHandlerTTests
         };
 
         // Act
-        await eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken).Timeout();
+        await eventWrapper.InvokeParallelAsync(EventArgs.Empty, TestContext.Current.CancellationToken);
 
         // Assert
         Received.InOrder(() =>
@@ -472,7 +471,7 @@ public class AsyncEventHandlerTTests
         action3.DidNotReceive().Invoke();
     }
 
-    [Fact]
+    [Fact(Timeout = 5000)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
     public async Task InvokeParallelAsync_WhenTokenIsCanceledWhenHandlerIsAwaiting_ShouldCancelAndThrowOperationCanceledException()
     {
@@ -492,7 +491,7 @@ public class AsyncEventHandlerTTests
         var invokeParallelAsync = async () =>
         {
             var task = eventWrapper.InvokeParallelAsync(EventArgs.Empty, cts.Token);
-            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken).Timeout();
+            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken);
             await cts.CancelAsync();
             await task;
         };
@@ -746,7 +745,7 @@ public class AsyncEventHandlerTTests
         action3.DidNotReceive().Invoke();
     }
 
-    [Fact]
+    [Fact(Timeout = 5000)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
     public async Task InvokeSequentialAsync_WhenTokenIsCanceledWhenHandlerIsAwaiting_ShouldCancelAndThrowOperationCanceledException()
     {
@@ -766,7 +765,7 @@ public class AsyncEventHandlerTTests
         var invokeSequentialAsync = async () =>
         {
             var task = eventWrapper.InvokeSequentialAsync(EventArgs.Empty, cts.Token);
-            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken).Timeout();
+            await handlerEnteredEvent.WaitAsync(TestContext.Current.CancellationToken);
             await cts.CancelAsync();
             await task;
         };
