@@ -33,7 +33,9 @@ jobs:
         run: dotnet test --configuration Release --no-build --verbosity normal
 
       - name: Pack
-        run: dotnet pack --configuration Release --no-build --output ${{ env.NuGetDirectory }} -p:PackageVersion=${{ github.event.release.tag_name }}
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+        run: dotnet pack --configuration Release --no-build --output ${{ env.NuGetDirectory }} -p:PackageVersion=${VERSION#v}
 
       - name: NuGet login
         uses: NuGet/login@v1
