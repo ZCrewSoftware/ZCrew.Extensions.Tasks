@@ -1,7 +1,7 @@
 using Nito.AsyncEx;
 using ZCrew.Extensions.Tasks.Dispatching;
 
-namespace ZCrew.Extensions.Tasks.UnitTests.Dispatching;
+namespace ZCrew.Extensions.Tasks.IntegrationTests.Dispatching;
 
 public class BackgroundDispatcherTests
 {
