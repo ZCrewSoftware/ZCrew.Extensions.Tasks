@@ -111,14 +111,14 @@ internal abstract class ChannelDispatcher : BackgroundDispatcher
     private async Task InvokeActionAsync(IAsyncAction action, CancellationToken token)
     {
         var operation = new AsyncDispatchedAction(action);
-        await this.operationChannel.Writer.WriteAsync(operation, token);
+        this.operationChannel.Writer.TryWrite(operation);
         await operation.WaitAsync(token);
     }
 
     private async Task<TResult> InvokeFuncAsync<TResult>(IAsyncFunc<TResult> func, CancellationToken token)
     {
         var operation = new AsyncDispatchedFunc<TResult>(func);
-        await this.operationChannel.Writer.WriteAsync(operation, token);
+        this.operationChannel.Writer.TryWrite(operation);
         return await operation.WaitAsync(token);
     }
 }
