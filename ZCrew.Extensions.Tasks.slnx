@@ -9,6 +9,7 @@
     <Project Path="src/ZCrew.Extensions.Tasks/ZCrew.Extensions.Tasks.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <File Path="tests/CLAUDE.md" />
     <Project Path="tests/ZCrew.Extensions.Tasks.UnitTests/ZCrew.Extensions.Tasks.UnitTests.csproj" />
   </Folder>
 </Solution>
