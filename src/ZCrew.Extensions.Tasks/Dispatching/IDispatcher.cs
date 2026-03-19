@@ -1,5 +1,10 @@
 namespace ZCrew.Extensions.Tasks.Dispatching;
 
+/// <summary>
+///     Represents a shared resource that can be used to dispatch asynchronous work onto specific threads. Most
+///     dispatchers will utilize a single thread to perform work in a safe environment. For example: dispatching work
+///     that modifies a user interface to prevent rendering partially-modified components.
+/// </summary>
 public interface IDispatcher
 {
     /// <summary>
