@@ -8,6 +8,7 @@ namespace ZCrew.Extensions.Tasks.Dispatching;
 internal class AsyncDispatchedFunc<TResult> : IDispatchedFunc<TResult>
 {
     private readonly TaskCompletionSource<TResult> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     private readonly IAsyncFunc<TResult> func;
 
     /// <summary>
@@ -25,13 +26,13 @@ internal class AsyncDispatchedFunc<TResult> : IDispatchedFunc<TResult>
     /// <inheritdoc/>
     public async Task<TResult> WaitAsync(CancellationToken token)
     {
-        return await this.tcs.Task.WaitAsync(token);
+        return await this.tcs.Task.WaitAsync(token).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
     public async Task InvokeAsync(CancellationToken token)
     {
-        var result = await this.func.InvokeAsync(token);
+        var result = await this.func.InvokeAsync(token).ConfigureAwait(false);
         this.tcs.SetResult(result);
     }
 

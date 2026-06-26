@@ -14,6 +14,7 @@ namespace ZCrew.Extensions.Tasks.Dispatching;
 internal sealed class DispatcherSynchronizationContext : SynchronizationContext
 {
     private readonly object contextLock;
+
     private Task taskQueue;
 
     /// <summary>

@@ -7,6 +7,7 @@ namespace ZCrew.Extensions.Tasks;
 public static class AsyncFuncExtensions
 {
     #region IAsyncFunc<TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncAction{TResult}"/>.
@@ -90,9 +91,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<TResult>(func);
     }
+
     #endregion IAsyncFunc<TResult>
 
     #region IAsyncFunc<T, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T, TResult}"/>.
@@ -184,9 +187,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T, TResult>(func);
     }
+
     #endregion IAsyncFunc<T, TResult>
 
     #region IAsyncFunc<T1, T2, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, TResult}"/>.
@@ -288,9 +293,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, TResult>
 
     #region IAsyncFunc<T1, T2, T3, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, T3, TResult}"/>.
@@ -402,9 +409,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, T3, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, T3, TResult>
 
     #region IAsyncFunc<T1, T2, T3, T4, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, T3, T4, TResult}"/>.
@@ -524,9 +533,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, T3, T4, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, T3, T4, TResult>
 
     #region IAsyncFunc<T1, T2, T3, T4, T5, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, T3, T4, T5, TResult}"/>.
@@ -652,9 +663,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, T3, T4, T5, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, T3, T4, T5, TResult>
 
     #region IAsyncFunc<T1, T2, T3, T4, T5, T6, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, T3, T4, T5, T6, TResult}"/>.
@@ -786,9 +799,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, T3, T4, T5, T6, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, T3, T4, T5, T6, TResult>
 
     #region IAsyncFunc<T1, T2, T3, T4, T5, T6, T7, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, T3, T4, T5, T6, T7, TResult}"/>.
@@ -926,9 +941,11 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, T3, T4, T5, T6, T7, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, T3, T4, T5, T6, T7, TResult>
 
     #region IAsyncFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="func"/> as an
     ///     <see cref="IAsyncFunc{T1, T2, T3, T4, T5, T6, T7, T8, TResult}"/>.
@@ -1120,5 +1137,6 @@ public static class AsyncFuncExtensions
         ArgumentNullException.ThrowIfNull(func);
         return new ValueTaskCancellationFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(func);
     }
+
     #endregion IAsyncFunc<T1, T2, T3, T4, T5, T6, T7, T8, TResult>
 }

@@ -9,7 +9,9 @@ namespace ZCrew.Extensions.Tasks.Dispatching;
 internal abstract class ChannelDispatcher : BackgroundDispatcher
 {
     private static int globalDispatcherId;
+
     private readonly AsyncLocal<int?> asyncDispatcherId = new();
+
     private readonly Channel<IDispatchedOperation> operationChannel;
 
     private readonly int dispatcherId;
@@ -82,10 +84,10 @@ internal abstract class ChannelDispatcher : BackgroundDispatcher
 
         while (!token.IsCancellationRequested)
         {
-            var operation = await this.operationChannel.Reader.ReadAsync(token);
+            var operation = await this.operationChannel.Reader.ReadAsync(token).ConfigureAwait(false);
             try
             {
-                await operation.InvokeAsync(token);
+                await operation.InvokeAsync(token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (operation.IsCanceled)
             {
@@ -112,13 +114,13 @@ internal abstract class ChannelDispatcher : BackgroundDispatcher
     {
         var operation = new AsyncDispatchedAction(action);
         this.operationChannel.Writer.TryWrite(operation);
-        await operation.WaitAsync(token);
+        await operation.WaitAsync(token).ConfigureAwait(false);
     }
 
     private async Task<TResult> InvokeFuncAsync<TResult>(IAsyncFunc<TResult> func, CancellationToken token)
     {
         var operation = new AsyncDispatchedFunc<TResult>(func);
         this.operationChannel.Writer.TryWrite(operation);
-        return await operation.WaitAsync(token);
+        return await operation.WaitAsync(token).ConfigureAwait(false);
     }
 }

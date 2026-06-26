@@ -124,7 +124,7 @@ public static class AsyncEventHandlerExtensions
         var whenAll = Task.WhenAll(tasks);
         try
         {
-            await whenAll;
+            await whenAll.ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
@@ -139,7 +139,7 @@ public static class AsyncEventHandlerExtensions
         async Task Invoke(AsyncEventHandler handler)
         {
             await Task.Yield();
-            await handler.Invoke(sender, eventArgs, token);
+            await handler.Invoke(sender, eventArgs, token).ConfigureAwait(false);
         }
     }
 
@@ -230,7 +230,7 @@ public static class AsyncEventHandlerExtensions
             // Invoke the async event handler and await its completion, collecting any exceptions thrown
             try
             {
-                await asyncEventHandlerInvocation.Invoke(sender, eventArgs, token);
+                await asyncEventHandlerInvocation.Invoke(sender, eventArgs, token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested)
             {
@@ -314,7 +314,7 @@ public static class AsyncEventHandlerExtensions
         var whenAll = Task.WhenAll(tasks);
         try
         {
-            await whenAll;
+            await whenAll.ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
@@ -329,7 +329,7 @@ public static class AsyncEventHandlerExtensions
         async Task Invoke(AsyncEventHandler<TEventArgs> handler)
         {
             await Task.Yield();
-            await handler.Invoke(sender, eventArgs, token);
+            await handler.Invoke(sender, eventArgs, token).ConfigureAwait(false);
         }
     }
 
@@ -423,7 +423,7 @@ public static class AsyncEventHandlerExtensions
             // Invoke the async event handler and await its completion, collecting any exceptions thrown
             try
             {
-                await asyncEventHandlerInvocation.Invoke(sender, eventArgs, token);
+                await asyncEventHandlerInvocation.Invoke(sender, eventArgs, token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested)
             {

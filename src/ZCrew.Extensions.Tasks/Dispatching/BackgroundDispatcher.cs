@@ -6,6 +6,7 @@ namespace ZCrew.Extensions.Tasks.Dispatching;
 internal abstract class BackgroundDispatcher : Dispatcher, IHostedDispatcher
 {
     private readonly CancellationTokenSource cancellationTokenSource = new();
+
     private Task executeAsync = Task.CompletedTask;
 
     /// <inheritdoc/>
@@ -16,7 +17,7 @@ internal abstract class BackgroundDispatcher : Dispatcher, IHostedDispatcher
         var task = ExecuteAsync(this.cancellationTokenSource.Token);
         if (task.IsCompleted)
         {
-            await task;
+            await task.ConfigureAwait(false);
             return;
         }
 
@@ -28,11 +29,11 @@ internal abstract class BackgroundDispatcher : Dispatcher, IHostedDispatcher
     {
         try
         {
-            await this.cancellationTokenSource.CancelAsync();
+            await this.cancellationTokenSource.CancelAsync().ConfigureAwait(false);
         }
         finally
         {
-            await Task.WhenAny(this.executeAsync, Task.Delay(Timeout.Infinite, token));
+            await Task.WhenAny(this.executeAsync, Task.Delay(Timeout.Infinite, token)).ConfigureAwait(false);
         }
     }
 
