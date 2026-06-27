@@ -4,7 +4,7 @@
     <ParentDirectoryBuildPropsPath>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))</ParentDirectoryBuildPropsPath>
   </PropertyGroup>
   <ImportGroup>
-    <Import Condition="'$(ParentDirectoryBuildPropsPath)' != ''" Project="$(ParentDirectoryBuildPropsPath)" />
+    <Import Condition="'$(ParentDirectoryBuildPropsPath)' != ''" Project="$(ParentDirectoryBuildPropsPath)"/>
   </ImportGroup>
 
   <!-- Common properties for all test projects -->
@@ -17,18 +17,18 @@
 
   <!-- Common projects for all test projects -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-    <PackageReference Include="NSubstitute" />
-    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage"/>
+    <PackageReference Include="NSubstitute"/>
+    <PackageReference Include="xunit.v3.mtp-v2"/>
   </ItemGroup>
 
   <!-- Exclude test projects from code coverage -->
   <ItemGroup>
-    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"/>
   </ItemGroup>
 
   <!-- Global usings for all test projects -->
   <ItemGroup>
-    <Using Include="Xunit" />
+    <Using Include="Xunit"/>
   </ItemGroup>
 </Project>

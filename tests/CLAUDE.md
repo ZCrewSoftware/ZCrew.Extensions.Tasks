@@ -1,20 +1,28 @@
 ## Testing
 
 # Run all tests
+
 dotnet test
 
 # Run a specific test project
+
 dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests
 dotnet test --project tests/ZCrew.Extensions.Tasks.IntegrationTests
 
 # Run a single test by method name (xunit v3 with Microsoft.Testing.Platform)
-dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests --filter-method "ZCrew.Extensions.Tasks.UnitTests.TaskFuncTests.TaskFunc_WhenInvoked_ShouldCallFuncOnce"
+
+dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests --filter-method "
+ZCrew.Extensions.Tasks.UnitTests.TaskFuncTests.TaskFunc_WhenInvoked_ShouldCallFuncOnce"
 
 # Run tests matching a pattern (wildcards supported)
+
 dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests --filter-method "*TaskFunc*"
 
 # Run all tests in a class
-dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests --filter-class "ZCrew.Extensions.Tasks.UnitTests.TaskFuncTests"
+
+dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests --filter-class "
+ZCrew.Extensions.Tasks.UnitTests.TaskFuncTests"
+
 ```
 
 - Test projects have `InternalsVisibleTo` access automatically via Directory.Build.props
@@ -42,4 +50,5 @@ dotnet test --project tests/ZCrew.Extensions.Tasks.UnitTests --filter-class "ZCr
   // Assert
   await Assert.ThrowsAsync<InvalidOperationException>(callOnEntry);
   ```
+
 - Use NSubstitute to assert that certain calls were made and verify call counts

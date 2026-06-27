@@ -16,8 +16,8 @@ This package is available on NuGet as `ZCrew.Extensions.Tasks` for these framewo
 
 ## Unified Async Wrappers
 
-This library provides unified async wrappers for delegates, allowing library authors to accept both synchronous and asynchronous callbacks through a common interface.
-
+This library provides unified async wrappers for delegates, allowing library authors to accept both synchronous and
+asynchronous callbacks through a common interface.
 
 ### Using an Async Wrapper
 
@@ -57,7 +57,8 @@ public class NotificationService
 
 ## Async Event Handlers
 
-Traditional C# events use `EventHandler` which is synchronous. This library provides `AsyncEventHandler` for async event patterns.
+Traditional C# events use `EventHandler` which is synchronous. This library provides `AsyncEventHandler` for async event
+patterns.
 
 ### Defining an Async Event
 

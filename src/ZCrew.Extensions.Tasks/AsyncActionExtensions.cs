@@ -6,6 +6,7 @@ namespace ZCrew.Extensions.Tasks;
 public static class AsyncActionExtensions
 {
     #region IAsyncAction
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction"/>.
     /// </summary>
@@ -77,9 +78,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction(action);
     }
+
     #endregion IAsyncAction
 
     #region IAsyncAction<T>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T}"/>.
     /// </summary>
@@ -159,9 +162,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T>(action);
     }
+
     #endregion IAsyncAction<T>
 
     #region IAsyncAction<T1, T2>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2}"/>.
     /// </summary>
@@ -248,9 +253,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2>(action);
     }
+
     #endregion IAsyncAction<T1, T2>
 
     #region IAsyncAction<T1, T2, T3>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2, T3}"/>.
     /// </summary>
@@ -347,9 +354,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2, T3>(action);
     }
+
     #endregion IAsyncAction<T1, T2, T3>
 
     #region IAsyncAction<T1, T2, T3, T4>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2, T3, T4}"/>.
     /// </summary>
@@ -456,9 +465,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2, T3, T4>(action);
     }
+
     #endregion IAsyncAction<T1, T2, T3, T4>
 
     #region IAsyncAction<T1, T2, T3, T4, T5>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2, T3, T4, T5}"/>.
     /// </summary>
@@ -575,9 +586,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2, T3, T4, T5>(action);
     }
+
     #endregion IAsyncAction<T1, T2, T3, T4, T5>
 
     #region IAsyncAction<T1, T2, T3, T4, T5, T6>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2, T3, T4, T5, T6}"/>.
     /// </summary>
@@ -700,9 +713,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2, T3, T4, T5, T6>(action);
     }
+
     #endregion IAsyncAction<T1, T2, T3, T4, T5, T6>
 
     #region IAsyncAction<T1, T2, T3, T4, T5, T6, T7>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2, T3, T4, T5, T6, T7}"/>.
     /// </summary>
@@ -831,9 +846,11 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2, T3, T4, T5, T6, T7>(action);
     }
+
     #endregion IAsyncAction<T1, T2, T3, T4, T5, T6, T7>
 
     #region IAsyncAction<T1, T2, T3, T4, T5, T6, T7, T8>
+
     /// <summary>
     ///     Wraps a synchronous <paramref name="action"/> as an <see cref="IAsyncAction{T1, T2, T3, T4, T5, T6, T7, T8}"/>.
     /// </summary>
@@ -968,5 +985,6 @@ public static class AsyncActionExtensions
         ArgumentNullException.ThrowIfNull(action);
         return new ValueTaskCancellationAction<T1, T2, T3, T4, T5, T6, T7, T8>(action);
     }
+
     #endregion IAsyncAction<T1, T2, T3, T4, T5, T6, T7, T8>
 }
